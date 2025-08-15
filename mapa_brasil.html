@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa Interativo de Internet no Brasil - Atualizado 2025</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    body { margin:0; padding:0; }
+    #map { width: 100vw; height: 100vh; }
+    .layer-btns { position: absolute; top: 10px; left: 10px; z-index: 1000; background:white; padding:10px; border-radius:5px; }
+    .layer-btns button { margin: 2px; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="layer-btns">
+    <button onclick="showOnlyLayer('fibra')">Fibra Óptica</button>
+    <button onclick="showOnlyLayer('5g')">5G</button>
+    <button onclick="showOnlyLayer('sat')">Satélite</button>
+    <button onclick="showOnlyLayer('noNet')">Sem Internet</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([-14.2350, -51.9253], 4); // centraliza no Brasil
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Camadas
+    const layers = {
+      fibra: L.layerGroup().addTo(map),
+      '5g': L.layerGroup().addTo(map),
+      sat: L.layerGroup().addTo(map),
+      noNet: L.layerGroup().addTo(map)
+    };
+
+    function showOnlyLayer(layerName) {
+      Object.keys(layers).forEach(l => {
+        if (l === layerName) {
+          if (!map.hasLayer(layers[l])) map.addLayer(layers[l]);
+        } else {
+          if (map.hasLayer(layers[l])) map.removeLayer(layers[l]);
+        }
+      });
+    }
+
+    // Dados atualizados: Fibra, 5G, Satélite e Sem Internet
+    const coberturaData = [
+      // Pontos de Fibra
+      { lat: -8.77, lng: -70.55, tipo: 'fibra', nome: 'Rio Branco - AC' },
+      { lat: -9.62, lng: -35.73, tipo: 'fibra', nome: 'Maceió - AL' },
+      { lat: 1.41, lng: -51.77, tipo: 'fibra', nome: 'Macapá - AP' },
+      { lat: -3.10, lng: -60.02, tipo: 'fibra', nome: 'Manaus - AM' },
+      { lat: -12.97, lng: -38.50, tipo: 'fibra', nome: 'Salvador - BA' },
+      { lat: -3.71, lng: -38.54, tipo: 'fibra', nome: 'Fortaleza - CE' },
+      { lat: -20.31, lng: -40.34, tipo: 'fibra', nome: 'Vitória - ES' },
+      { lat: -16.64, lng: -49.31, tipo: 'fibra', nome: 'Goiânia - GO' },
+      { lat: -2.55, lng: -44.30, tipo: 'fibra', nome: 'São Luís - MA' },
+      { lat: -12.64, lng: -55.42, tipo: 'fibra', nome: 'Cuiabá - MT' },
+      { lat: -20.51, lng: -54.54, tipo: 'fibra', nome: 'Campo Grande - MS' },
+      { lat: -19.92, lng: -43.93, tipo: 'fibra', nome: 'Belo Horizonte - MG' },
+      { lat: -3.79, lng: -52.48, tipo: 'fibra', nome: 'Belém - PA' },
+      { lat: -7.12, lng: -34.86, tipo: 'fibra', nome: 'João Pessoa - PB' },
+      { lat: -24.89, lng: -51.55, tipo: 'fibra', nome: 'Curitiba - PR' },
+      { lat: -8.05, lng: -34.87, tipo: 'fibra', nome: 'Recife - PE' },
+      { lat: -7.71, lng: -41.69, tipo: 'fibra', nome: 'Teresina - PI' },
+      { lat: -22.91, lng: -43.17, tipo: 'fibra', nome: 'Rio de Janeiro - RJ' },
+      { lat: -5.79, lng: -35.21, tipo: 'fibra', nome: 'Natal - RN' },
+      { lat: -30.03, lng: -51.23, tipo: 'fibra', nome: 'Porto Alegre - RS' },
+      { lat: -11.22, lng: -62.80, tipo: 'fibra', nome: 'Porto Velho - RO' },
+      { lat: 2.82, lng: -60.67, tipo: 'fibra', nome: 'Boa Vista - RR' },
+      { lat: -27.33, lng: -49.44, tipo: 'fibra', nome: 'Florianópolis - SC' },
+      { lat: -23.55, lng: -46.63, tipo: 'fibra', nome: 'São Paulo - SP' },
+      { lat: -10.91, lng: -37.07, tipo: 'fibra', nome: 'Aracaju - SE' },
+      { lat: -10.17, lng: -48.30, tipo: 'fibra', nome: 'Palmas - TO' },
+      { lat: -15.79, lng: -47.88, tipo: 'fibra', nome: 'Brasília - DF' },
+
+      // Pontos de 5G
+      { lat: -8.77, lng: -70.55, tipo: '5g', nome: 'Rio Branco - AC' },
+      { lat: -9.62, lng: -35.73, tipo: '5g', nome: 'Maceió - AL' },
+      { lat: 1.41, lng: -51.77, tipo: '5g', nome: 'Macapá - AP' },
+      { lat: -3.10, lng: -60.02, tipo: '5g', nome: 'Manaus - AM' },
+      { lat: -12.97, lng: -38.50, tipo: '5g', nome: 'Salvador - BA' },
+      { lat: -3.71, lng: -38.54, tipo: '5g', nome: 'Fortaleza - CE' },
+      { lat: -20.31, lng: -40.34, tipo: '5g', nome: 'Vitória - ES' },
+      { lat: -16.64, lng: -49.31, tipo: '5g', nome: 'Goiânia - GO' },
+      { lat: -2.55, lng: -44.30, tipo: '5g', nome: 'São Luís - MA' },
+      { lat: -12.64, lng: -55.42, tipo: '5g', nome: 'Cuiabá - MT' },
+      { lat: -20.51, lng: -54.54, tipo: '5g', nome: 'Campo Grande - MS' },
+      { lat: -19.92, lng: -43.93, tipo: '5g', nome: 'Belo Horizonte - MG' },
+      { lat: -3.79, lng: -52.48, tipo: '5g', nome: 'Belém - PA' },
+      { lat: -7.12, lng: -34.86, tipo: '5g', nome: 'João Pessoa - PB' },
+      { lat: -24.89, lng: -51.55, tipo: '5g', nome: 'Curitiba - PR' },
+      { lat: -8.05, lng: -34.87, tipo: '5g', nome: 'Recife - PE' },
+      { lat: -7.71, lng: -41.69, tipo: '5g', nome: 'Teresina - PI' },
+      { lat: -22.91, lng: -43.17, tipo: '5g', nome: 'Rio de Janeiro - RJ' },
+      { lat: -5.79, lng: -35.21, tipo: '5g', nome: 'Natal - RN' },
+      { lat: -30.03, lng: -51.23, tipo: '5g', nome: 'Porto Alegre - RS' },
+      { lat: -11.22, lng: -62.80, tipo: '5g', nome: 'Porto Velho - RO' },
+      { lat: 2.82, lng: -60.67, tipo: '5g', nome: 'Boa Vista - RR' },
+      { lat: -27.33, lng: -49.44, tipo: '5g', nome: 'Florianópolis - SC' },
+      { lat: -23.55, lng: -46.63, tipo: '5g', nome: 'São Paulo - SP' },
+      { lat: -10.91, lng: -37.07, tipo: '5g', nome: 'Aracaju - SE' },
+      { lat: -10.17, lng: -48.30, tipo: '5g', nome: 'Palmas - TO' },
+      { lat: -15.79, lng: -47.88, tipo: '5g', nome: 'Brasília - DF' },
+
+      // Pontos de Satélite (Starlink/VSAT)
+      { lat: -23.55, lng: -46.63, tipo: 'sat', nome: 'São Paulo - SP' },
+      { lat: -22.91, lng: -43.17, tipo: 'sat', nome: 'Rio de Janeiro - RJ' },
+      { lat: -30.03, lng: -51.23, tipo: 'sat', nome: 'Porto Alegre - RS' },
+      { lat: -3.10, lng: -60.02, tipo: 'sat', nome: 'Manaus - AM' },
+      { lat: -12.97, lng: -38.50, tipo: 'sat', nome: 'Salvador - BA' },
+      { lat: -27.33, lng: -49.44, tipo: 'sat', nome: 'Florianópolis - SC' },
+      { lat: -15.79, lng: -47.88, tipo: 'sat', nome: 'Brasília - DF' },
+      { lat: -3.71, lng: -38.54, tipo: 'sat', nome: 'Fortaleza - CE' },
+
+      // Pontos sem internet (exemplo)
+      { lat: -10.00, lng: -70.00, tipo: 'noNet', nome: 'Região sem internet 1' },
+      { lat: -5.00, lng: -60.00, tipo: 'noNet', nome: 'Região sem internet 2' },
+      { lat: -15.00, lng: -45.00, tipo: 'noNet', nome: 'Região sem internet 3' }
+    ];
+
+    // Adiciona pontos ao mapa
+    coberturaData.forEach(p => {
+      let color = 'gray';
+      if (p.tipo === 'fibra') color = 'green';
+      if (p.tipo === '5g') color = 'blue';
+      if (p.tipo === 'sat') color = 'yellow';
+      if (p.tipo === 'noNet') color = 'red';
+
+      const marker = L.circleMarker([p.lat, p.lng], {
+        color: color,
+        radius: 8,
+        fillOpacity: 0.7
+      }).bindPopup(`${p.nome} - ${p.tipo}`);
+
+      layers[p.tipo].addLayer(marker);
+    });
+
+  </script>
+</body>
+</html>
